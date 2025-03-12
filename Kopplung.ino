@@ -1,78 +1,59 @@
-// AutoAmpel
-int ROT = 9;
-int GELB = 7;
-int GRUEN = 5;
+int ROT = 13;
+int GELB = 12;
+int GRUEN = 11;
 
-// Fußgängerampel
-int F_ROT = 3;
-int F_GRUEN = 4;
+int F_ROT = 7;
+int F_GRUEN = 6;
 
-// Taster (2 Straßenseiten)
-int TASTER1 = 2;
-int TASTER2 = 3;
+int TASTER1 = 3;
+int TASTER2 = 4;
 
-// Status der Taster
 int TasterLesen1;
 int TasterLesen2;
 
-// Piezo-Lautsprecher Pin
-int PIEZO = 10;
+int PIEZO = 2;
 
 void setup()
 {
-  // Fahrbahnampel
   pinMode(ROT, OUTPUT);
   pinMode(GELB, OUTPUT);
   pinMode(GRUEN, OUTPUT);
 
-  // Fußgängerampel
   pinMode(F_ROT, OUTPUT);
   pinMode(F_GRUEN, OUTPUT); 
 
-  // Taster (beide Seiten)
   pinMode(TASTER1, INPUT_PULLUP);
   pinMode(TASTER2, INPUT_PULLUP);
 
-  // Piezo-Lautsprecher
   pinMode(PIEZO, OUTPUT);
 }
 
 void loop()
 {
-  // Ampel grün/Fußgängerampel rot
   digitalWrite(F_ROT, HIGH);
   digitalWrite(GRUEN, HIGH);
 
-  // Zustand der Taster lesen
   TasterLesen1 = digitalRead(TASTER1);
   TasterLesen2 = digitalRead(TASTER2);
-  delay(200);
+  delay(0);
  
-  // Wenn **einer** der beiden Taster gedrückt wird
   if (TasterLesen1 == LOW || TasterLesen2 == LOW)
   {
-    // 1 s Pause
     delay(1000);
 
-    // Fahrbahnampel grün aus
     digitalWrite(GRUEN, LOW);
 
-    // Fahrbahnampel gelb an 
     digitalWrite(GELB, HIGH);
     delay(1000);
     digitalWrite(GELB, LOW);
 
-    // Fahrbahnampel rot an
     digitalWrite(ROT, HIGH); 
 
-    // 1 s Sicherheitszeit 
     delay(1000); 
 
-    // Fußgängerampel auf grün schalten (beide Seiten)
     digitalWrite(F_ROT, LOW);
     digitalWrite(F_GRUEN, HIGH);
 
-    // Ton-Signal für Blinde alle 0,5 Sekunden
     unsigned long previousMillis = 0;
     const long interval = 500;
 
@@ -83,24 +64,22 @@ void loop()
       if (currentMillis - previousMillis >= interval)
       {
         previousMillis = currentMillis;
-        tone(PIEZO, 1000);
-        delay(250);
+        tone(PIEZO, 500);
+        delay(80);
         noTone(PIEZO);
       }
     }
 
-    // Fußgängerampel auf rot schalten
     digitalWrite(F_GRUEN, LOW);
     digitalWrite(F_ROT, HIGH);
 
-    // 1 s Pause
     delay(1000);
 
-    // Fahrbahnampel auf gelb und dann auf grün schalten
     digitalWrite(GELB, HIGH);
     delay(1000);
     digitalWrite(ROT, LOW);
     digitalWrite(GELB, LOW);
     digitalWrite(GRUEN, HIGH);
+
   }
 }
